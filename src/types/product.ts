@@ -48,12 +48,13 @@ export interface Product {
   updatedAt: string;
 }
 
-export type ProductFilters = {
+export interface ProductFilters {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
   colors?: string[];
   styles?: string[];
   materials?: string[];
+  search?: string; // Added search property
   sort?: "price-asc" | "price-desc" | "newest" | "bestselling" | "featured";
-};
+}

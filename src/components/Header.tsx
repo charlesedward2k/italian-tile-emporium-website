@@ -1,11 +1,12 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, Search, Menu, X, User } from "lucide-react";
+import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import SearchBar from "./SearchBar";
+import AccountMenu from "./AccountMenu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,11 +80,8 @@ const Header = () => {
                 </span>
               </Button>
             </Link>
-            <Link to="/admin">
-              <Button variant="ghost" size="icon" aria-label="Account">
-                <User className="h-5 w-5" />
-              </Button>
-            </Link>
+            
+            <AccountMenu />
 
             {/* Mobile Menu Button */}
             <Button

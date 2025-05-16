@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -23,8 +24,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { Product } from "@/types/product";
 import { products } from "@/data/products";
+import AddProductForm from "@/components/AddProductForm";
 
 const AdminPanel = () => {
   const [productList, setProductList] = useState<Product[]>([]);
@@ -33,12 +36,42 @@ const AdminPanel = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const navigate = useNavigate();
+  const { isAdmin } = useAuth();
+  
+  // Mock order data
+  const orders = [
+    { id: "ORD-1234", customer: "John Doe", date: "2024-05-10", total: 785.50, status: "Delivered" },
+    { id: "ORD-1235", customer: "Sarah Smith", date: "2024-05-12", total: 420.75, status: "Processing" },
+    { id: "ORD-1236", customer: "Michael Brown", date: "2024-05-13", total: 1250.00, status: "Shipped" },
+    { id: "ORD-1237", customer: "Laura Wilson", date: "2024-05-14", total: 340.25, status: "Pending" },
+    { id: "ORD-1238", customer: "Robert Taylor", date: "2024-05-15", total: 890.00, status: "Delivered" },
+  ];
+  
+  // Mock customer data
+  const customers = [
+    { id: "CUST-001", name: "John Doe", email: "john.doe@example.com", orders: 3, totalSpent: 1205.75, joined: "2024-03-15" },
+    { id: "CUST-002", name: "Sarah Smith", email: "sarah.smith@example.com", orders: 2, totalSpent: 420.75, joined: "2024-03-25" },
+    { id: "CUST-003", name: "Michael Brown", email: "michael.brown@example.com", orders: 5, totalSpent: 2850.00, joined: "2024-01-10" },
+    { id: "CUST-004", name: "Laura Wilson", email: "laura.wilson@example.com", orders: 1, totalSpent: 340.25, joined: "2024-04-20" },
+    { id: "CUST-005", name: "Robert Taylor", email: "robert.taylor@example.com", orders: 4, totalSpent: 1590.00, joined: "2023-12-05" },
+  ];
 
   useEffect(() => {
+    // Redirect if not admin
+    if (!isAdmin) {
+      navigate("/");
+      toast({
+        title: "Access denied",
+        description: "You need admin permissions to view this page.",
+        variant: "destructive",
+      });
+    }
+    
     // In a real app, this would fetch from an API
     setProductList(products);
     setFilteredProducts(products);
-  }, []);
+  }, [isAdmin, navigate, toast]);
 
   useEffect(() => {
     if (searchQuery) {
@@ -125,6 +158,7 @@ const AdminPanel = () => {
         <Tabs defaultValue="products">
           <TabsList className="mb-8">
             <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="add-product">Add Product</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="customers">Customers</TabsTrigger>
           </TabsList>
@@ -132,7 +166,6 @@ const AdminPanel = () => {
           <TabsContent value="products" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-serif">Product Management</h2>
-              <Button>Add New Product</Button>
             </div>
 
             {/* Search and Filter */}
@@ -211,25 +244,99 @@ const AdminPanel = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="orders">
-            <div className="flex justify-center items-center h-64">
-              <div className="text-center">
-                <h3 className="text-lg font-medium mb-2">Orders Management</h3>
-                <p className="text-muted-foreground">
-                  This feature is coming soon in the next update.
-                </p>
-              </div>
+          <TabsContent value="add-product">
+            <div className="space-y-6">
+              <h2 className="text-2xl font-serif">Add New Product</h2>
+              <AddProductForm />
             </div>
           </TabsContent>
 
-          <TabsContent value="customers">
-            <div className="flex justify-center items-center h-64">
-              <div className="text-center">
-                <h3 className="text-lg font-medium mb-2">Customer Management</h3>
-                <p className="text-muted-foreground">
-                  This feature is coming soon in the next update.
-                </p>
-              </div>
+          <TabsContent value="orders" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-serif">Order Management</h2>
+            </div>
+
+            {/* Orders Table */}
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Order ID</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {orders.map((order) => (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-medium">{order.id}</TableCell>
+                      <TableCell>{order.customer}</TableCell>
+                      <TableCell>{order.date}</TableCell>
+                      <TableCell className="text-right">${order.total.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <span 
+                          className={
+                            order.status === "Delivered" ? "text-green-600" : 
+                            order.status === "Processing" ? "text-blue-600" :
+                            order.status === "Shipped" ? "text-purple-600" : 
+                            "text-yellow-600"
+                          }
+                        >
+                          {order.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="customers" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-serif">Customer Management</h2>
+            </div>
+
+            {/* Customers Table */}
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer ID</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead className="text-center">Orders</TableHead>
+                    <TableHead className="text-right">Total Spent</TableHead>
+                    <TableHead>Joined</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {customers.map((customer) => (
+                    <TableRow key={customer.id}>
+                      <TableCell className="font-medium">{customer.id}</TableCell>
+                      <TableCell>{customer.name}</TableCell>
+                      <TableCell>{customer.email}</TableCell>
+                      <TableCell className="text-center">{customer.orders}</TableCell>
+                      <TableCell className="text-right">${customer.totalSpent.toFixed(2)}</TableCell>
+                      <TableCell>{customer.joined}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="outline" size="sm">
+                          View Profile
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </TabsContent>
         </Tabs>

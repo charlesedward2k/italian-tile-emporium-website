@@ -4,7 +4,7 @@ import { Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ProductFilters } from "@/types/product";
+import type { ProductFilters } from "@/types/product"; // Fixed with type-only import
 import {
   Sheet,
   SheetContent,
