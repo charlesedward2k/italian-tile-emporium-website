@@ -12,6 +12,13 @@ import ContactPage from "./pages/ContactPage";
 import CartPage from "./pages/CartPage";
 import AdminPanel from "./pages/AdminPanel";
 import NotFoundPage from "./pages/NotFoundPage";
+import CollectionsPage from "./pages/CollectionsPage";
+import AboutPage from "./pages/AboutPage";
+import ShippingPage from "./pages/ShippingPage";
+import FAQPage from "./pages/FAQPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import WarrantyPage from "./pages/WarrantyPage";
+import TermsPage from "./pages/TermsPage";
 
 const queryClient = new QueryClient();
 
@@ -26,9 +33,16 @@ const App = () => (
             <Route path="/" element={<HomePage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route path="/collections" element={<CollectionsPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/shipping" element={<ShippingPage />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/warranty" element={<WarrantyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

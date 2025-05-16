@@ -268,20 +268,19 @@ const ContactPage = () => {
             </Form>
           </div>
           
-          {/* Map placeholder - would be replaced with actual map implementation */}
+          {/* Google Map integration */}
           <div className="rounded-lg overflow-hidden h-[400px] lg:h-auto">
-            <div className="bg-muted w-full h-full flex items-center justify-center">
-              <div className="text-center px-6">
-                <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-medium mb-2">Visit Our Showroom</h3>
-                <p className="text-muted-foreground">
-                  123 Tile Street, Florence, Italy 50123
-                </p>
-                <p className="mt-4 text-sm text-muted-foreground">
-                  [Interactive map would be displayed here]
-                </p>
-              </div>
-            </div>
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2880.965896031714!2d11.251137076566674!3d43.76961577109639!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x132a56a680d2d6ad%3A0x93d57917efc72a03!2sFlorence%2C%20Metropolitan%20City%20of%20Florence%2C%20Italy!5e0!3m2!1sen!2sus!4v1716620988954!5m2!1sen!2sus" 
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              title="ToscanaTiles Location"
+              className="w-full h-full min-h-[400px]"
+            ></iframe>
           </div>
         </div>
       </div>

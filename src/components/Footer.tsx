@@ -18,13 +18,13 @@ const Footer = () => {
               Premium quality tiles sourced from the finest Italian manufacturers.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-white hover:text-tile-terracotta transition-colors" aria-label="Instagram">
+              <a href="https://instagram.com" className="text-white hover:text-tile-terracotta transition-colors" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-white hover:text-tile-terracotta transition-colors" aria-label="Facebook">
+              <a href="https://facebook.com" className="text-white hover:text-tile-terracotta transition-colors" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-white hover:text-tile-terracotta transition-colors" aria-label="Twitter">
+              <a href="https://twitter.com" className="text-white hover:text-tile-terracotta transition-colors" aria-label="Twitter" target="_blank" rel="noopener noreferrer">
                 <Twitter size={20} />
               </a>
             </div>
