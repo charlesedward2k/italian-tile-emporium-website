@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
+import OptimizedImage from "@/components/OptimizedImage";
 import { getFeaturedProducts, getBestsellerProducts } from "@/data/products";
 
 const HomePage = () => {
@@ -18,12 +19,15 @@ const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[600px] lg:h-[700px] bg-gray-100 overflow-hidden">
+      <section className="relative h-[600px] lg:h-[700px] overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
-          <img
+          <OptimizedImage
             src="https://images.unsplash.com/photo-1600607686527-6fb886090705"
             alt="Italian tiles in a modern home"
-            className="w-full h-full object-cover"
+            className="w-full h-full"
+            imageType="hero"
+            objectFit="cover"
+            priority={true} // Load hero image immediately as it's above the fold
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
         </div>
@@ -84,10 +88,13 @@ const HomePage = () => {
                 to={category.link}
                 className="relative group overflow-hidden rounded-lg aspect-square"
               >
-                <img 
-                  src={category.image} 
-                  alt={category.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                <OptimizedImage 
+                  src={category.image}
+                  alt={category.title} 
+                  className="w-full h-full transition-transform duration-500 group-hover:scale-110"
+                  imageType="thumbnail"
+                  objectFit="cover"
+                  priority={index < 2} // Only prioritize first two categories (likely visible above fold)
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">

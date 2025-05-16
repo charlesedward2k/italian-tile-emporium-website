@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types/product";
 import { useToast } from "@/components/ui/use-toast";
+import OptimizedImage from "@/components/OptimizedImage";
 
 interface ProductCardProps {
   product: Product;
@@ -44,11 +45,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="relative aspect-square bg-muted">
-          <img
+          <OptimizedImage
             src={product.images[0].url}
             alt={product.images[0].alt}
-            className="object-cover w-full h-full"
-            loading="lazy"
+            className="w-full h-full"
+            imageType="thumbnail"
+            objectFit="cover"
+            priority={false}
           />
           
           {/* Sale or featured badge */}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, ArrowLeft, Check } from "lucide-react";
@@ -14,6 +13,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
+import OptimizedImage from "@/components/OptimizedImage";
 import { Product } from "@/types/product";
 import { getProductBySlug, getRelatedProducts } from "@/data/products";
 import ProductGrid from "@/components/ProductGrid";
@@ -96,10 +96,13 @@ const ProductDetailPage = () => {
           {/* Product Images */}
           <div className="space-y-4">
             <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-              <img
+              <OptimizedImage
                 src={selectedImage}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full"
+                imageType="gallery"
+                objectFit="cover"
+                priority={true}
               />
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2">
@@ -111,10 +114,12 @@ const ProductDetailPage = () => {
                   }`}
                   onClick={() => setSelectedImage(image.url)}
                 >
-                  <img
+                  <OptimizedImage
                     src={image.url}
                     alt={image.alt}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full"
+                    imageType="thumbnail"
+                    objectFit="cover"
                   />
                 </button>
               ))}

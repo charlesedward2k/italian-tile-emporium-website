@@ -1,4 +1,5 @@
 
+import { useRef, useEffect } from "react";
 import ProductCard from "./ProductCard";
 import { Product } from "@/types/product";
 
@@ -7,6 +8,33 @@ interface ProductGridProps {
 }
 
 const ProductGrid = ({ products }: ProductGridProps) => {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // Add intersection observer for analytics and performance monitoring
+  useEffect(() => {
+    if (!gridRef.current) return;
+
+    // Create observer to track when products come into view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Could log analytics events or performance metrics here
+            // console.log(`Product grid visible at ${performance.now()}ms`);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(gridRef.current);
+
+    return () => {
+      if (gridRef.current) observer.unobserve(gridRef.current);
+    };
+  }, [products]);
+  
   if (products.length === 0) {
     return (
       <div className="text-center py-20">
@@ -17,7 +45,7 @@ const ProductGrid = ({ products }: ProductGridProps) => {
   }
   
   return (
-    <div className="tile-grid">
+    <div ref={gridRef} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

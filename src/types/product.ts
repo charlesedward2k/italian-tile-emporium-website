@@ -4,6 +4,22 @@ export interface ProductImage {
   url: string;
   alt: string;
   main: boolean;
+  width?: number;  // Optional width for aspect ratio calculation
+  height?: number; // Optional height for aspect ratio calculation
+  blurDataUrl?: string; // Optional base64 encoded LQIP
+  formats?: {     // Optional different image formats
+    webp?: string;
+    avif?: string;
+    jpg?: string;
+    original?: string;
+  };
+  sizes?: {       // Optional different sizes for responsive images
+    thumbnail?: string;
+    small?: string;
+    medium?: string;
+    large?: string;
+    original?: string;
+  };
 }
 
 export interface ProductVariant {
@@ -55,6 +71,6 @@ export interface ProductFilters {
   colors?: string[];
   styles?: string[];
   materials?: string[];
-  search?: string; // Added search property
+  search?: string;
   sort?: "price-asc" | "price-desc" | "newest" | "bestselling" | "featured";
 }
