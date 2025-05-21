@@ -23,12 +23,17 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/use-toast";
+import { AppUser } from "@/types/AppUser";
 
 const AccountMenu = () => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Access user metadata for first and last name
+  const firstName = user?.user_metadata?.first_name;
+  const lastName = user?.user_metadata?.last_name;
 
   const handleLogout = () => {
     logout();
@@ -52,7 +57,7 @@ const AccountMenu = () => {
             <Avatar className="h-8 w-8">
               <AvatarImage src="" />
               <AvatarFallback className="bg-primary text-primary-foreground">
-                {user?.firstName?.[0] || user?.email?.[0] || "U"}
+                {firstName?.[0] || user?.email?.[0] || "U"}
               </AvatarFallback>
             </Avatar>
           ) : (
@@ -65,7 +70,7 @@ const AccountMenu = () => {
           <>
             <DropdownMenuLabel>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">{user?.firstName} {user?.lastName}</span>
+                <span className="text-sm font-medium">{firstName} {lastName}</span>
                 <span className="text-xs text-muted-foreground">{user?.email}</span>
               </div>
             </DropdownMenuLabel>

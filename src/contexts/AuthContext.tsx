@@ -2,15 +2,16 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
+import { AppUser } from "@/types/AppUser";
 
 interface AuthContextType {
-  user: User | null;
+  user: AppUser | null;
   session: Session | null;
   loading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<{ user: User | null; session: Session | null }>;
   logout: () => Promise<void>;
 }
 
@@ -21,12 +22,12 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   isAdmin: false,
   login: async () => {},
-  signUp: async () => {},
+  signUp: async () => ({ user: null, session: null }),
   logout: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -36,10 +37,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
         setSession(newSession);
-        setUser(newSession?.user ?? null);
+        setUser(newSession?.user as AppUser | null);
         if (newSession?.user) {
           // Check if user is admin (in a production app, this would check against a database role)
-          checkUserRole(newSession.user);
+          checkUserRole(newSession.user as AppUser);
         } else {
           setIsAdmin(false);
         }
@@ -50,9 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Then check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
-      setUser(currentSession?.user ?? null);
+      setUser(currentSession?.user as AppUser | null);
       if (currentSession?.user) {
-        checkUserRole(currentSession.user);
+        checkUserRole(currentSession.user as AppUser);
       }
       setLoading(false);
     });
@@ -62,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const checkUserRole = (user: User) => {
+  const checkUserRole = (user: AppUser) => {
     // In a real app, you would query a user_roles table or check claims
     // For this demo, we'll consider the admin email as the check
     if (user.email === "admin@bengyhome.com") {
@@ -95,9 +96,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     if (error) throw error;
     
-    // In a real app, you would create a profile record in a profiles table
-    // For this demo, we'll just return the user data
-    return data;
+    // Return the data for the caller to use if needed
+    return { user: data.user, session: data.session };
   };
 
   const logout = async () => {

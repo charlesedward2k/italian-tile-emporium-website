@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { z } from "zod";
@@ -95,13 +94,15 @@ const AuthPage = () => {
   
   const onSignupSubmit = async (data: SignupForm) => {
     try {
-      await signUp(data.email, data.password, data.firstName, data.lastName);
-      toast({
-        title: "Account created",
-        description: "Your account has been created successfully. You may now log in.",
-      });
-      setActiveTab("login");
-      loginForm.setValue("email", data.email);
+      const result = await signUp(data.email, data.password, data.firstName, data.lastName);
+      if (result.user) {
+        toast({
+          title: "Account created",
+          description: "Your account has been created successfully. You may now log in.",
+        });
+        setActiveTab("login");
+        loginForm.setValue("email", data.email);
+      }
     } catch (error: any) {
       toast({
         title: "Signup failed",
