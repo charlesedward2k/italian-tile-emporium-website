@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, ShoppingCart } from "lucide-react";
@@ -8,6 +9,7 @@ import { Product } from "@/types/product";
 import { useToast } from "@/components/ui/use-toast";
 import OptimizedImage from "@/components/OptimizedImage";
 import { useShoppingCart } from "@/hooks/use-shopping-cart";
+import { useCurrency } from "@/hooks/use-currency";
 
 interface ProductCardProps {
   product: Product;
@@ -16,6 +18,7 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps) => {
   const { toast } = useToast();
   const { addItem } = useShoppingCart();
+  const { convertPrice, formatPrice } = useCurrency();
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   
@@ -48,6 +51,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
       description: `${product.name} has been ${isWishlisted ? "removed from" : "added to"} your wishlist.`,
     });
   };
+
+  // Convert product prices to the selected currency
+  const displayPrice = convertPrice(product.price);
+  const displayCompareAtPrice = product.compareAtPrice ? convertPrice(product.compareAtPrice) : null;
 
   return (
     <Link to={`/products/${product.slug}`}>
@@ -113,10 +120,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <p className="text-sm text-muted-foreground">{product.category}</p>
             <h3 className="font-medium text-lg line-clamp-1">{product.name}</h3>
             <div className="flex items-baseline gap-2">
-              <span className="font-semibold">${product.price.toFixed(2)}</span>
-              {product.compareAtPrice && (
+              <span className="font-semibold">{formatPrice(displayPrice)}</span>
+              {displayCompareAtPrice && (
                 <span className="text-sm text-muted-foreground line-through">
-                  ${product.compareAtPrice.toFixed(2)}
+                  {formatPrice(displayCompareAtPrice)}
                 </span>
               )}
             </div>

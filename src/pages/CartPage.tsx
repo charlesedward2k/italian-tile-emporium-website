@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Trash2, RefreshCcw } from "lucide-react";
@@ -6,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { useShoppingCart } from "@/hooks/use-shopping-cart";
+import { useCurrency } from "@/hooks/use-currency";
 
 const CartPage = () => {
   const { items: cartItems, updateItemQuantity, removeItem, clearCart, getCartTotals } = useShoppingCart();
+  const { formatPrice, currency } = useCurrency();
   const { toast } = useToast();
 
   const handleRemoveItem = (id: string, variant?: string) => {
@@ -115,7 +118,7 @@ const CartPage = () => {
                         <p className="md:hidden text-sm text-muted-foreground">
                           Price:
                         </p>
-                        <p>${item.price.toFixed(2)}</p>
+                        <p>{formatPrice(item.price)}</p>
                       </div>
 
                       {/* Quantity */}
@@ -162,7 +165,7 @@ const CartPage = () => {
                           Subtotal:
                         </p>
                         <p className="font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          {formatPrice(item.price * item.quantity)}
                         </p>
                         <button
                           onClick={() => handleRemoveItem(item.id, item.variant)}
@@ -186,11 +189,11 @@ const CartPage = () => {
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>${shipping.toFixed(2)}</span>
+                    <span>{formatPrice(shipping)}</span>
                   </div>
                 </div>
                 
@@ -198,7 +201,7 @@ const CartPage = () => {
                 
                 <div className="flex justify-between text-lg font-medium mb-6">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{formatPrice(total)}</span>
                 </div>
                 
                 <Button className="w-full">
