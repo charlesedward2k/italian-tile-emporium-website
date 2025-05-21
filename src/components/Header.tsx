@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import AccountMenu from "./AccountMenu";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(0);
   const isMobile = useIsMobile();
   const location = useLocation();
   
@@ -21,6 +22,36 @@ const Header = () => {
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
+
+  // Listen for cart updates
+  useEffect(() => {
+    const updateCartBadge = () => {
+      // Get cart data from localStorage or state management
+      const cartData = localStorage.getItem('cart');
+      if (cartData) {
+        try {
+          const cart = JSON.parse(cartData);
+          const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+          setCartItemCount(itemCount);
+        } catch (error) {
+          console.error('Error parsing cart data:', error);
+          setCartItemCount(0);
+        }
+      } else {
+        setCartItemCount(0);
+      }
+    };
+
+    // Initial update
+    updateCartBadge();
+
+    // Listen for custom cart update events
+    window.addEventListener('cartUpdated', updateCartBadge);
+
+    return () => {
+      window.removeEventListener('cartUpdated', updateCartBadge);
+    };
+  }, []);
 
   const isActive = (path: string) => {
     if (path === "/" && location.pathname !== "/") {
@@ -39,7 +70,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <span className="font-serif text-2xl font-medium text-tile-navy">
-              Toscana<span className="text-tile-terracotta">Tiles</span>
+              Bengy<span className="text-tile-terracotta">Home Decor</span>
             </span>
           </Link>
 
@@ -75,9 +106,11 @@ const Header = () => {
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative" aria-label="Cart">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-tile-terracotta text-white text-xs flex items-center justify-center">
-                  0
-                </span>
+                {cartItemCount > 0 && (
+                  <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-tile-terracotta text-white text-xs flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
               </Button>
             </Link>
             

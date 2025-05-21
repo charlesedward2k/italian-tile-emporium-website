@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Trash2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,42 +7,67 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 
-// Mock cart data for demonstration
-const initialCartItems = [
-  {
-    id: "1",
-    name: "Carrara Hexagon Mosaic",
-    variant: "Standard",
-    price: 24.99,
-    quantity: 2,
-    image: "https://images.unsplash.com/photo-1615971677499-5467cbab01c0"
-  },
-  {
-    id: "2",
-    name: "Tuscan Terracotta Floor Tile",
-    variant: "Standard Square",
-    price: 18.50,
-    quantity: 1,
-    image: "https://images.unsplash.com/photo-1600607686527-6fb886090705"
-  }
-];
+// Cart item interface
+interface CartItem {
+  id: string;
+  name: string;
+  variant: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const { toast } = useToast();
+
+  // Load cart items from localStorage
+  useEffect(() => {
+    const loadCartItems = () => {
+      const storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        try {
+          const parsedCart = JSON.parse(storedCart);
+          setCartItems(parsedCart);
+        } catch (error) {
+          console.error('Error parsing cart data:', error);
+          setCartItems([]);
+        }
+      }
+    };
+
+    loadCartItems();
+
+    // Listen for cart updates from other components
+    window.addEventListener('cartUpdated', loadCartItems);
+
+    return () => {
+      window.removeEventListener('cartUpdated', loadCartItems);
+    };
+  }, []);
+
+  // Update cart in localStorage and dispatch event
+  const updateCart = (newCartItems: CartItem[]) => {
+    localStorage.setItem('cart', JSON.stringify(newCartItems));
+    setCartItems(newCartItems);
+    
+    // Dispatch event for other components to listen to
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+  };
 
   const updateItemQuantity = (id: string, quantity: number) => {
     if (quantity < 1) return;
     
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      )
+    const updatedItems = cartItems.map((item) =>
+      item.id === id ? { ...item, quantity } : item
     );
+    
+    updateCart(updatedItems);
   };
 
   const removeItem = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+    const updatedItems = cartItems.filter((item) => item.id !== id);
+    updateCart(updatedItems);
     
     toast({
       description: "Item removed from cart"
@@ -50,7 +75,7 @@ const CartPage = () => {
   };
 
   const clearCart = () => {
-    setCartItems([]);
+    updateCart([]);
     
     toast({
       description: "Cart has been cleared"
@@ -70,6 +95,11 @@ const CartPage = () => {
       {/* Header */}
       <div className="bg-muted py-8">
         <div className="container mx-auto px-4">
+          <div className="flex items-center text-sm mb-4">
+            <Link to="/" className="text-muted-foreground hover:text-foreground">Home</Link>
+            <span className="mx-2 text-muted-foreground">/</span>
+            <span className="font-medium">Shopping Cart</span>
+          </div>
           <h1 className="text-3xl font-serif">Your Shopping Cart</h1>
         </div>
       </div>
@@ -116,6 +146,7 @@ const CartPage = () => {
                           src={item.image}
                           alt={item.name}
                           className="w-20 h-20 object-cover rounded-md"
+                          loading="lazy"
                         />
                       </div>
 
@@ -204,7 +235,7 @@ const CartPage = () => {
               </div>
 
               <div className="mt-8">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => updateCart(cartItems)}>
                   <RefreshCcw className="mr-2 h-4 w-4" />
                   Update Cart
                 </Button>
@@ -288,8 +319,8 @@ const CartPage = () => {
             </div>
             <h2 className="text-2xl font-medium mb-4">Your cart is empty</h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-8">
-              Looks like you haven't added any tiles to your cart yet.
-              Browse our collection to find the perfect tiles for your project.
+              Looks like you haven't added any items to your cart yet.
+              Browse our collection to find the perfect products for your home.
             </p>
             <Button size="lg" asChild>
               <Link to="/products">Start Shopping</Link>

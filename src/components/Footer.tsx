@@ -12,10 +12,10 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Company Info */}
           <div>
-            <h3 className="font-serif text-xl mb-4">ToscanaTiles</h3>
+            <h3 className="font-serif text-xl mb-4">Bengy Home Decor</h3>
             <p className="text-gray-300 mb-6 text-sm">
-              Bringing the beauty and craftsmanship of Italian tiles directly to your home. 
-              Premium quality tiles sourced from the finest Italian manufacturers.
+              Bringing quality tiles and home decor products to transform your space.
+              Visit our showroom in Kumasi for expert advice and a wide selection of products.
             </p>
             <div className="flex space-x-4">
               <a href="https://instagram.com" className="text-white hover:text-tile-terracotta transition-colors" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
@@ -60,15 +60,15 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-gray-300">
               <li className="flex items-start">
                 <MapPin size={18} className="mr-2 mt-1 min-w-[18px] text-tile-terracotta" />
-                <span>123 Tile Street, Florence, Italy 50123</span>
+                <span>Patasi, Santasi Road (West End Hospital By-Pass No. 88), opposite KSTS, Kumasi, Ashanti Region, Ghana</span>
               </li>
               <li className="flex items-center">
                 <Phone size={18} className="mr-2 text-tile-terracotta min-w-[18px]" />
-                <span>+1 (555) 123-4567</span>
+                <span>+233 54 832 8195</span>
               </li>
               <li className="flex items-center">
                 <Mail size={18} className="mr-2 text-tile-terracotta min-w-[18px]" />
-                <span>info@toscanatiles.com</span>
+                <span>info@bengyhome.com</span>
               </li>
             </ul>
           </div>
@@ -76,9 +76,9 @@ const Footer = () => {
         
         {/* Copyright */}
         <div className="border-t border-gray-700 pt-8 mt-8 text-sm text-gray-400 flex flex-col md:flex-row justify-between items-center">
-          <p>&copy; {currentYear} ToscanaTiles. All rights reserved.</p>
+          <p>&copy; {currentYear} Bengy Home Decor. All rights reserved.</p>
           <p className="mt-2 md:mt-0">
-            Designed with <span className="text-tile-terracotta">♥</span> for quality Italian tiles
+            Designed with <span className="text-tile-terracotta">♥</span> for quality home decor
           </p>
         </div>
       </div>

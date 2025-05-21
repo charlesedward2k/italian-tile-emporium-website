@@ -1,22 +1,30 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 
 const PrivacyPolicyPage = () => {
   return (
     <div className="min-h-screen">
-      <div className="bg-muted py-12">
+      <div className="bg-muted py-8">
         <div className="container mx-auto px-4">
+          {/* Breadcrumbs */}
+          <div className="flex items-center text-sm mb-4">
+            <Link to="/" className="text-muted-foreground hover:text-foreground">Home</Link>
+            <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
+            <span className="font-medium">Privacy Policy</span>
+          </div>
           <h1 className="text-3xl md:text-4xl font-serif">Privacy Policy</h1>
           <p className="text-muted-foreground mt-4">
-            Last updated: May 16, 2025
+            Last updated: May 21, 2025
           </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="prose max-w-none">
           <p>
-            ToscanaTiles ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how your personal information is collected, used, and disclosed by ToscanaTiles.
+            Bengy Home Decor ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how your personal information is collected, used, and disclosed by Bengy Home Decor.
           </p>
 
           <h2>Information We Collect</h2>
@@ -74,9 +82,9 @@ const PrivacyPolicyPage = () => {
             If you have any questions about this Privacy Policy, please contact us at:
           </p>
           <p>
-            Email: privacy@toscanatiles.com<br />
-            Phone: +1 (555) 123-4567<br />
-            Address: 123 Tile Street, Florence, Italy 50123
+            Email: privacy@bengyhome.com<br />
+            Phone: +233 54 832 8195<br />
+            Address: Patasi, Santasi Road (West End Hospital By-Pass No. 88), opposite KSTS, Kumasi, Ashanti Region, Ghana
           </p>
         </div>
       </div>

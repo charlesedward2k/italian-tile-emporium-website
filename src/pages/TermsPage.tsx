@@ -1,23 +1,25 @@
 
 import React from "react";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const TermsPage = () => {
   return (
     <div className="min-h-screen">
       <div className="bg-muted py-12">
         <div className="container mx-auto px-4">
+          <Breadcrumb items={[{ label: "Terms & Conditions" }]} />
           <h1 className="text-3xl md:text-4xl font-serif">Terms & Conditions</h1>
           <p className="text-muted-foreground mt-4">
-            Last updated: May 16, 2025
+            Last updated: May 21, 2025
           </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="prose max-w-none">
           <h2>Agreement to Terms</h2>
           <p>
-            By accessing or using the ToscanaTiles website, you agree to be bound by these Terms and Conditions. If you disagree with any part of these terms, you may not access the website or purchase products from us.
+            By accessing or using the Bengy Home Decor website, you agree to be bound by these Terms and Conditions. If you disagree with any part of these terms, you may not access the website or purchase products from us.
           </p>
 
           <h2>Products and Pricing</h2>
@@ -64,17 +66,17 @@ const TermsPage = () => {
 
           <h2>Intellectual Property</h2>
           <p>
-            All content on the ToscanaTiles website, including text, graphics, logos, images, and software, is the property of ToscanaTiles or its content suppliers and is protected by international copyright laws.
+            All content on the Bengy Home Decor website, including text, graphics, logos, images, and software, is the property of Bengy Home Decor or its content suppliers and is protected by international copyright laws.
           </p>
 
           <h2>Limitation of Liability</h2>
           <p>
-            ToscanaTiles will not be liable for any indirect, incidental, special, consequential or punitive damages resulting from your use of or inability to use the website or products.
+            Bengy Home Decor will not be liable for any indirect, incidental, special, consequential or punitive damages resulting from your use of or inability to use the website or products.
           </p>
 
           <h2>Governing Law</h2>
           <p>
-            These Terms shall be governed by and construed in accordance with the laws of Italy, without giving effect to any principles of conflicts of law.
+            These Terms shall be governed by and construed in accordance with the laws of Ghana, without giving effect to any principles of conflicts of law.
           </p>
 
           <h2>Changes to Terms</h2>
@@ -84,7 +86,7 @@ const TermsPage = () => {
 
           <h2>Contact Information</h2>
           <p>
-            Questions about the Terms should be sent to us at legal@toscanatiles.com.
+            Questions about the Terms should be sent to us at legal@bengyhome.com.
           </p>
         </div>
       </div>

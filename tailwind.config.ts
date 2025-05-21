@@ -63,13 +63,13 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Italian tile theme colors
+				// Bengy Home Decor color palette
 				tile: {
-					'terracotta': '#E07A5F',
-					'cream': '#F2F0EB',
-					'blue': '#3D5A80',
-					'navy': '#293241',
-					'sand': '#EADFCF',
+					'terracotta': '#9b87f5', // Purple
+					'cream': '#F2F0EB',      // Cream (unchanged)
+					'blue': '#7E69AB',       // Secondary Purple
+					'navy': '#1A1F2C',       // Dark Purple
+					'sand': '#D6BCFA',       // Light Purple
 				}
 			},
 			fontFamily: {

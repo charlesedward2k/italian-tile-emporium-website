@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { ChevronRight } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -31,9 +32,20 @@ type SignupForm = z.infer<typeof signupSchema>;
 
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+  const [loginAttempts, setLoginAttempts] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { login, signUp, isAuthenticated } = useAuth();
+  
+  const from = location.state?.from?.pathname || "/";
+  
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
   
   const loginForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -56,13 +68,23 @@ const AuthPage = () => {
   
   const onLoginSubmit = async (data: LoginForm) => {
     try {
+      if (loginAttempts >= 5) {
+        toast({
+          title: "Too many attempts",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       await login(data.email, data.password);
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in.",
       });
-      navigate("/");
     } catch (error) {
+      console.error('Login error:', error);
+      setLoginAttempts(prev => prev + 1);
       toast({
         title: "Login failed",
         description: "Invalid email or password. Please try again.",
@@ -71,21 +93,34 @@ const AuthPage = () => {
     }
   };
   
-  const onSignupSubmit = (data: SignupForm) => {
-    // In a real app, this would register the user
-    console.log("Signup data:", data);
-    toast({
-      title: "Account created",
-      description: "Your account has been created successfully. Please log in.",
-    });
-    setActiveTab("login");
-    loginForm.setValue("email", data.email);
+  const onSignupSubmit = async (data: SignupForm) => {
+    try {
+      await signUp(data.email, data.password, data.firstName, data.lastName);
+      toast({
+        title: "Account created",
+        description: "Your account has been created successfully. You may now log in.",
+      });
+      setActiveTab("login");
+      loginForm.setValue("email", data.email);
+    } catch (error: any) {
+      toast({
+        title: "Signup failed",
+        description: error.message || "Failed to create account. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <div className="min-h-screen">
       <div className="bg-muted py-8">
         <div className="container mx-auto px-4">
+          {/* Breadcrumbs */}
+          <div className="flex items-center text-sm mb-4">
+            <Link to="/" className="text-muted-foreground hover:text-foreground">Home</Link>
+            <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
+            <span className="font-medium">Account</span>
+          </div>
           <h1 className="text-3xl md:text-4xl font-serif">Account</h1>
         </div>
       </div>
@@ -139,8 +174,12 @@ const AuthPage = () => {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button type="submit" className="w-full">
-                      Login
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={loginForm.formState.isSubmitting}
+                    >
+                      {loginForm.formState.isSubmitting ? "Logging in..." : "Login"}
                     </Button>
                   </CardFooter>
                 </form>
@@ -218,8 +257,12 @@ const AuthPage = () => {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button type="submit" className="w-full">
-                      Create Account
+                    <Button 
+                      type="submit" 
+                      className="w-full"
+                      disabled={signupForm.formState.isSubmitting}
+                    >
+                      {signupForm.formState.isSubmitting ? "Creating Account..." : "Create Account"}
                     </Button>
                   </CardFooter>
                 </form>
