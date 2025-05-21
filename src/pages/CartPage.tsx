@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Trash2, RefreshCcw } from "lucide-react";
@@ -6,87 +5,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
-
-// Cart item interface
-interface CartItem {
-  id: string;
-  name: string;
-  variant: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+import { useShoppingCart } from "@/hooks/use-shopping-cart";
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { items: cartItems, updateItemQuantity, removeItem, clearCart, getCartTotals } = useShoppingCart();
   const { toast } = useToast();
 
-  // Load cart items from localStorage
-  useEffect(() => {
-    const loadCartItems = () => {
-      const storedCart = localStorage.getItem('cart');
-      if (storedCart) {
-        try {
-          const parsedCart = JSON.parse(storedCart);
-          setCartItems(parsedCart);
-        } catch (error) {
-          console.error('Error parsing cart data:', error);
-          setCartItems([]);
-        }
-      }
-    };
-
-    loadCartItems();
-
-    // Listen for cart updates from other components
-    window.addEventListener('cartUpdated', loadCartItems);
-
-    return () => {
-      window.removeEventListener('cartUpdated', loadCartItems);
-    };
-  }, []);
-
-  // Update cart in localStorage and dispatch event
-  const updateCart = (newCartItems: CartItem[]) => {
-    localStorage.setItem('cart', JSON.stringify(newCartItems));
-    setCartItems(newCartItems);
-    
-    // Dispatch event for other components to listen to
-    window.dispatchEvent(new CustomEvent('cartUpdated'));
-  };
-
-  const updateItemQuantity = (id: string, quantity: number) => {
-    if (quantity < 1) return;
-    
-    const updatedItems = cartItems.map((item) =>
-      item.id === id ? { ...item, quantity } : item
-    );
-    
-    updateCart(updatedItems);
-  };
-
-  const removeItem = (id: string) => {
-    const updatedItems = cartItems.filter((item) => item.id !== id);
-    updateCart(updatedItems);
+  const handleRemoveItem = (id: string, variant?: string) => {
+    removeItem(id, variant);
     
     toast({
       description: "Item removed from cart"
     });
   };
 
-  const clearCart = () => {
-    updateCart([]);
+  const handleClearCart = () => {
+    clearCart();
     
     toast({
       description: "Cart has been cleared"
     });
   };
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const handleUpdateQuantity = (id: string, quantity: number, variant?: string) => {
+    if (quantity < 1) return;
+    updateItemQuantity(id, quantity, variant);
+  };
   
+  const { subtotal } = getCartTotals();
   const shipping = 15.00;
   const total = subtotal + shipping;
 
@@ -118,7 +64,7 @@ const CartPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={clearCart}
+                  onClick={handleClearCart}
                   className="text-sm text-muted-foreground"
                 >
                   <Trash2 className="h-4 w-4 mr-1" /> Clear Cart
@@ -137,7 +83,7 @@ const CartPage = () => {
                 <div className="divide-y">
                   {cartItems.map((item) => (
                     <div
-                      key={item.id}
+                      key={`${item.id}-${item.variant || ''}`}
                       className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr_1fr_auto] gap-4 p-4 items-center"
                     >
                       {/* Image */}
@@ -154,10 +100,10 @@ const CartPage = () => {
                       <div>
                         <h3 className="font-medium">{item.name}</h3>
                         <p className="text-sm text-muted-foreground">
-                          Variant: {item.variant}
+                          Variant: {item.variant || 'Default'}
                         </p>
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => handleRemoveItem(item.id, item.variant)}
                           className="text-sm text-red-500 hover:text-red-700 flex items-center mt-2 md:hidden"
                         >
                           <Trash2 className="h-3 w-3 mr-1" /> Remove
@@ -182,9 +128,7 @@ const CartPage = () => {
                             variant="outline"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() =>
-                              updateItemQuantity(item.id, item.quantity - 1)
-                            }
+                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1, item.variant)}
                           >
                             -
                           </Button>
@@ -193,9 +137,10 @@ const CartPage = () => {
                             min="1"
                             value={item.quantity}
                             onChange={(e) =>
-                              updateItemQuantity(
+                              handleUpdateQuantity(
                                 item.id,
-                                parseInt(e.target.value) || 1
+                                parseInt(e.target.value) || 1,
+                                item.variant
                               )
                             }
                             className="w-12 h-8 text-center mx-1"
@@ -204,9 +149,7 @@ const CartPage = () => {
                             variant="outline"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() =>
-                              updateItemQuantity(item.id, item.quantity + 1)
-                            }
+                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1, item.variant)}
                           >
                             +
                           </Button>
@@ -222,7 +165,7 @@ const CartPage = () => {
                           ${(item.price * item.quantity).toFixed(2)}
                         </p>
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => handleRemoveItem(item.id, item.variant)}
                           className="text-red-500 hover:text-red-700 ml-4 hidden md:block"
                           aria-label="Remove item"
                         >
@@ -232,13 +175,6 @@ const CartPage = () => {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              <div className="mt-8">
-                <Button variant="outline" className="w-full" onClick={() => updateCart(cartItems)}>
-                  <RefreshCcw className="mr-2 h-4 w-4" />
-                  Update Cart
-                </Button>
               </div>
             </div>
 

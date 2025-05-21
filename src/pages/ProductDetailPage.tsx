@@ -17,11 +17,13 @@ import OptimizedImage from "@/components/OptimizedImage";
 import { Product } from "@/types/product";
 import { getProductBySlug, getRelatedProducts } from "@/data/products";
 import ProductGrid from "@/components/ProductGrid";
+import { useShoppingCart } from "@/hooks/use-shopping-cart";
 
 const ProductDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addItem } = useShoppingCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -62,9 +64,19 @@ const ProductDetailPage = () => {
   );
 
   const handleAddToCart = () => {
+    // Add the item to cart with selected variant and quantity
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: selectedVariantDetails?.price || product.price,
+      quantity: quantity,
+      image: selectedImage || product.images[0].url,
+      variant: selectedVariantDetails?.name
+    });
+    
     toast({
       title: "Added to Cart",
-      description: `${product.name} (${selectedVariantDetails?.name}) has been added to your cart.`,
+      description: `${product.name} (${selectedVariantDetails?.name || 'Default'}) has been added to your cart.`,
     });
   };
 

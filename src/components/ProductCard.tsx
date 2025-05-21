@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, ShoppingCart } from "lucide-react";
@@ -8,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types/product";
 import { useToast } from "@/components/ui/use-toast";
 import OptimizedImage from "@/components/OptimizedImage";
+import { useShoppingCart } from "@/hooks/use-shopping-cart";
 
 interface ProductCardProps {
   product: Product;
@@ -15,12 +15,24 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const { toast } = useToast();
+  const { addItem } = useShoppingCart();
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Add the item to cart
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.images[0].url,
+      variant: product.variants[0]?.name || "Default"
+    });
+    
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart.`,
