@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CurrencyProvider } from '@/hooks/use-currency';
-import { Index } from './pages/Index';
+import Index from './pages/Index';
 import { Toaster } from '@/components/ui/sonner';
 import './App.css';
 
