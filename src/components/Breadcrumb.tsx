@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Home } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BreadcrumbProps {
   items: {
@@ -11,8 +12,20 @@ interface BreadcrumbProps {
 
 const Breadcrumb = ({ items }: BreadcrumbProps) => {
   return (
-    <div className="flex items-center text-sm mb-4">
-      <Link to="/" className="text-muted-foreground hover:text-foreground">Home</Link>
+    <nav className="flex items-center text-sm mb-4" aria-label="Breadcrumb">
+      <div className="flex items-center">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link to="/" className="text-muted-foreground hover:text-foreground flex items-center">
+              <Home className="h-4 w-4" />
+              <span className="sr-only">Home</span>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Home</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
       
       {items.map((item, index) => (
         <div key={index} className="flex items-center">
@@ -26,7 +39,7 @@ const Breadcrumb = ({ items }: BreadcrumbProps) => {
           )}
         </div>
       ))}
-    </div>
+    </nav>
   );
 };
 

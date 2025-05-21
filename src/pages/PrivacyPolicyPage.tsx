@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const PrivacyPolicyPage = () => {
   return (
@@ -9,11 +9,7 @@ const PrivacyPolicyPage = () => {
       <div className="bg-muted py-8">
         <div className="container mx-auto px-4">
           {/* Breadcrumbs */}
-          <div className="flex items-center text-sm mb-4">
-            <Link to="/" className="text-muted-foreground hover:text-foreground">Home</Link>
-            <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground" />
-            <span className="font-medium">Privacy Policy</span>
-          </div>
+          <Breadcrumb items={[{ label: "Privacy Policy" }]} />
           <h1 className="text-3xl md:text-4xl font-serif">Privacy Policy</h1>
           <p className="text-muted-foreground mt-4">
             Last updated: May 21, 2025
