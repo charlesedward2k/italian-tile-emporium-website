@@ -1,13 +1,44 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import MainLayout from '@/components/MainLayout';
+import HomePage from './HomePage';
+import ProductsPage from './ProductsPage';
+import ProductDetailPage from './ProductDetailPage';
+import CartPage from './CartPage';
+import AboutPage from './AboutPage';
+import ContactPage from './ContactPage';
+import CollectionsPage from './CollectionsPage';
+import NotFoundPage from './NotFoundPage';
+import AuthPage from './AuthPage';
+import PrivacyPolicyPage from './PrivacyPolicyPage';
+import TermsPage from './TermsPage';
+import ShippingPage from './ShippingPage';
+import WarrantyPage from './WarrantyPage';
+import FAQPage from './FAQPage';
+import AdminPanel from './AdminPanel';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="products" element={<ProductsPage />} />
+        <Route path="products/:productId" element={<ProductDetailPage />} />
+        <Route path="cart" element={<CartPage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="collections" element={<CollectionsPage />} />
+        <Route path="auth" element={<AuthPage />} />
+        <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="terms" element={<TermsPage />} />
+        <Route path="shipping" element={<ShippingPage />} />
+        <Route path="warranty" element={<WarrantyPage />} />
+        <Route path="faq" element={<FAQPage />} />
+        <Route path="admin" element={<AdminPanel />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 };
 
