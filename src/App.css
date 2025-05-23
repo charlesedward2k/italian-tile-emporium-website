@@ -42,9 +42,24 @@
   color: #888;
 }
 
-@media (max-width: 640px) {
+/* Improved responsive container padding */
+@media (max-width: 768px) {
   .container {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+}
+
+/* Fix min width and overflow issues on mobile */
+html, body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+/* Make sure content doesn't overflow on small screens */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
 }

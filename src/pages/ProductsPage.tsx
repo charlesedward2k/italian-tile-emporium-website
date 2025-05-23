@@ -38,22 +38,43 @@ const ProductsPage = () => {
   const [sort, setSort] = useState<string>(
     queryParams.get("sort") || "featured"
   );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize data
   useEffect(() => {
-    const allProducts = filterProducts({});
-    setProducts(allProducts);
-    setCategories(getAllCategories());
-    setMaterials(getAllMaterials());
-    setStyles(getAllStyles());
-    setColors(getAllColors());
+    try {
+      setLoading(true);
+      console.log("Fetching products data...");
+      const allProducts = filterProducts({});
+      console.log(`Found ${allProducts.length} products`);
+      setProducts(allProducts);
+      setCategories(getAllCategories());
+      setMaterials(getAllMaterials());
+      setStyles(getAllStyles());
+      setColors(getAllColors());
+      setLoading(false);
+    } catch (err) {
+      console.error("Error loading products:", err);
+      setError("Failed to load products. Please try again later.");
+      setLoading(false);
+    }
   }, []);
 
   // Apply filters and sorting
   useEffect(() => {
-    const filtered = filterProducts(filters);
-    const sorted = sortProducts(filtered, sort);
-    setFilteredProducts(sorted);
+    try {
+      if (products.length > 0) {
+        console.log("Applying filters and sorting...");
+        const filtered = filterProducts(filters);
+        const sorted = sortProducts(filtered, sort);
+        console.log(`Filtered to ${sorted.length} products`);
+        setFilteredProducts(sorted);
+      }
+    } catch (err) {
+      console.error("Error filtering products:", err);
+      setError("Failed to filter products. Please try again later.");
+    }
   }, [filters, sort, products]);
 
   const handleFilterChange = (newFilters: FiltersType) => {
@@ -97,7 +118,7 @@ const ProductsPage = () => {
             {/* Sort and Results Count */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <p className="text-muted-foreground">
-                Showing {filteredProducts.length} products
+                {loading ? 'Loading products...' : `Showing ${filteredProducts.length} products`}
               </p>
               <div className="flex items-center gap-2">
                 <span className="text-sm">Sort by:</span>
@@ -116,15 +137,41 @@ const ProductsPage = () => {
               </div>
             </div>
 
+            {/* Error state */}
+            {error && (
+              <div className="text-center py-10">
+                <p className="text-destructive">{error}</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4"
+                  onClick={() => window.location.reload()}
+                >
+                  Retry
+                </Button>
+              </div>
+            )}
+
+            {/* Loading state */}
+            {loading && (
+              <div className="text-center py-10">
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+                <p className="mt-4">Loading products...</p>
+              </div>
+            )}
+
             {/* Product Grid */}
-            <ProductGrid products={filteredProducts} />
+            {!loading && !error && (
+              <ProductGrid products={filteredProducts} />
+            )}
 
             {/* Pagination placeholder - for future implementation */}
-            <div className="mt-12 flex justify-center">
-              <Button variant="outline" disabled>
-                Load More
-              </Button>
-            </div>
+            {!loading && !error && filteredProducts.length > 0 && (
+              <div className="mt-12 flex justify-center">
+                <Button variant="outline" disabled>
+                  Load More
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

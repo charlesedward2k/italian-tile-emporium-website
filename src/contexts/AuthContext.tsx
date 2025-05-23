@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
 import { AppUser } from "@/types/AppUser";
+import { toast } from "sonner";
 
 interface AuthContextType {
   user: AppUser | null;
@@ -25,6 +26,10 @@ const AuthContext = createContext<AuthContextType>({
   signUp: async () => ({ user: null, session: null }),
   logout: async () => {},
 });
+
+// Admin credentials (only hard-coded for development purposes)
+const ADMIN_EMAIL = "admin@bengyhome.com";
+const ADMIN_PASSWORD = "reubenAdmin";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AppUser | null>(null);
@@ -66,9 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const checkUserRole = (user: AppUser) => {
-    // In a real app, you would query a user_roles table or check claims
-    // For this demo, we'll consider any email ending with @bengyhome.com as admin
-    if (user.email?.endsWith("@bengyhome.com")) {
+    // Consider the special admin email as admin
+    if (user.email === ADMIN_EMAIL || user.email?.endsWith("@bengyhome.com")) {
       console.log("Setting user as admin:", user.email);
       setIsAdmin(true);
     } else {
@@ -78,14 +82,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     console.log("Attempting login for:", email);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
     
-    if (error) {
-      console.error("Login error:", error);
-      throw error;
+    // Special case for admin login
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      try {
+        // Try login with admin credentials
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        if (error) {
+          // If login fails, try to create the admin account
+          console.log("Admin account doesn't exist yet, creating it...");
+          const { error: signupError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                first_name: "Admin",
+                last_name: "User",
+              },
+            },
+          });
+          
+          if (signupError) throw signupError;
+          
+          // Try logging in again after creating account
+          const { error: loginError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          
+          if (loginError) throw loginError;
+        }
+      } catch (error) {
+        console.error("Admin login error:", error);
+        toast.error("Failed to log in as admin. Please check your credentials.");
+        throw error;
+      }
+    } else {
+      // Regular user login
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        console.error("Login error:", error);
+        toast.error("Invalid email or password. Please try again.");
+        throw error;
+      }
     }
     
     // After successful login, the onAuthStateChange listener will handle setting the user
