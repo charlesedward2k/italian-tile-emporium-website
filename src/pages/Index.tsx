@@ -17,6 +17,7 @@ import ShippingPage from './ShippingPage';
 import WarrantyPage from './WarrantyPage';
 import FAQPage from './FAQPage';
 import AdminPanel from './AdminPanel';
+import ProductManagementPage from './ProductManagementPage';
 
 const Index = () => {
   return (
@@ -36,6 +37,7 @@ const Index = () => {
         <Route path="warranty" element={<WarrantyPage />} />
         <Route path="faq" element={<FAQPage />} />
         <Route path="admin" element={<AdminPanel />} />
+        <Route path="product-management" element={<ProductManagementPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
