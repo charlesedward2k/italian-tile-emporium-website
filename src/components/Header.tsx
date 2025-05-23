@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import SearchBar from "./SearchBar";
 import AccountMenu from "./AccountMenu";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -64,12 +65,12 @@ const Header = () => {
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-sm border-b">
+    <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur-sm border-b">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <span className="font-serif text-2xl font-medium text-tile-navy">
+            <span className="font-serif text-2xl font-medium text-foreground">
               Bengy<span className="text-tile-terracotta">Home Decor</span>
             </span>
           </Link>
@@ -94,6 +95,8 @@ const Header = () => {
 
           {/* Navigation Icons */}
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            
             <Button
               variant="ghost"
               size="icon"

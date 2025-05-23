@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -128,6 +129,14 @@ const AuthPage = () => {
 
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
+          <Alert className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Admin Login</AlertTitle>
+            <AlertDescription>
+              To login as an admin, use an email ending with @bengyhome.com
+            </AlertDescription>
+          </Alert>
+
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "login" | "signup")}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
