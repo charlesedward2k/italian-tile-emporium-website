@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, ArrowLeft, Check } from "lucide-react";
@@ -31,30 +32,63 @@ const ProductDetailPage = () => {
   const [selectedVariant, setSelectedVariant] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!slug) return;
-
-    const productData = getProductBySlug(slug);
-    if (productData) {
-      setProduct(productData);
-      setSelectedImage(productData.images[0].url);
-      
-      if (productData.variants.length > 0) {
-        setSelectedVariant(productData.variants[0].id);
-      }
-      
-      setRelatedProducts(getRelatedProducts(productData, 3));
-    } else {
-      // Product not found, redirect to products page
-      navigate("/products");
+    if (!slug) {
+      setError("No product slug provided");
+      setLoading(false);
+      return;
     }
-  }, [slug, navigate]);
 
-  if (!product) {
+    console.log("Loading product with slug:", slug);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const productData = getProductBySlug(slug);
+      console.log("Found product:", productData);
+      
+      if (productData) {
+        setProduct(productData);
+        setSelectedImage(productData.images[0].url);
+        
+        if (productData.variants.length > 0) {
+          setSelectedVariant(productData.variants[0].id);
+        }
+        
+        const related = getRelatedProducts(productData, 3);
+        console.log("Related products:", related);
+        setRelatedProducts(related);
+      } else {
+        console.log("Product not found for slug:", slug);
+        setError("Product not found");
+      }
+    } catch (err) {
+      console.error("Error loading product:", err);
+      setError("Failed to load product");
+    } finally {
+      setLoading(false);
+    }
+  }, [slug]);
+
+  if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <p>Loading product...</p>
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+        <p className="mt-4">Loading product...</p>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <p className="text-destructive mb-4">{error || "Product not found"}</p>
+        <Button onClick={() => navigate("/products")} variant="outline">
+          Back to Products
+        </Button>
       </div>
     );
   }
@@ -394,10 +428,12 @@ const ProductDetailPage = () => {
         </div>
 
         {/* Related Products */}
-        <div className="mt-16">
-          <h2 className="text-2xl font-serif mb-6">You might also like</h2>
-          <ProductGrid products={relatedProducts} />
-        </div>
+        {relatedProducts.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-serif mb-6">You might also like</h2>
+            <ProductGrid products={relatedProducts} />
+          </div>
+        )}
       </div>
     </div>
   );
