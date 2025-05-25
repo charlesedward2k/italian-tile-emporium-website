@@ -115,16 +115,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // In this case, we'll create a mock session for admin purposes
           console.log("Creating mock admin session due to Supabase restrictions");
           
-          const mockUser = {
+          const mockUser: AppUser = {
             id: 'admin-mock-id',
+            aud: 'authenticated',
+            role: 'authenticated',
             email: ADMIN_EMAIL,
+            email_confirmed_at: new Date().toISOString(),
+            phone: '',
+            confirmed_at: new Date().toISOString(),
+            last_sign_in_at: new Date().toISOString(),
+            app_metadata: {},
             user_metadata: {
               first_name: 'Admin',
               last_name: 'User'
             },
+            identities: [],
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          } as AppUser;
+            updated_at: new Date().toISOString(),
+            is_anonymous: false
+          };
           
           setUser(mockUser);
           setIsAdmin(true);
