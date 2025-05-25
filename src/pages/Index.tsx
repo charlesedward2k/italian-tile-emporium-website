@@ -36,7 +36,7 @@ const Index = () => {
         <Route path="shipping" element={<ShippingPage />} />
         <Route path="warranty" element={<WarrantyPage />} />
         <Route path="faq" element={<FAQPage />} />
-        <Route path="admin" element={<AdminPanel />} />
+        <Route path="admin/*" element={<AdminPanel />} />
         <Route path="product-management" element={<ProductManagementPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

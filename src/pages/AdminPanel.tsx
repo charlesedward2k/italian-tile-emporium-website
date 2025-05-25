@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -37,7 +37,31 @@ const AdminPanel = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAdmin } = useAuth();
+  
+  // Determine active tab based on URL
+  const getActiveTabFromPath = () => {
+    const path = location.pathname;
+    if (path.includes('/admin/products')) return 'products';
+    if (path.includes('/admin/add-product')) return 'add-product';
+    if (path.includes('/admin/orders')) return 'orders';
+    if (path.includes('/admin/customers')) return 'customers';
+    return 'products'; // default
+  };
+
+  const [activeTab, setActiveTab] = useState(getActiveTabFromPath());
+
+  // Update active tab when URL changes
+  useEffect(() => {
+    setActiveTab(getActiveTabFromPath());
+  }, [location.pathname]);
+
+  // Handle tab changes and update URL
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    navigate(`/admin/${value}`);
+  };
   
   // Mock order data
   const orders = [
@@ -155,7 +179,7 @@ const AdminPanel = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="products">
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
           <TabsList className="mb-8">
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="add-product">Add Product</TabsTrigger>
